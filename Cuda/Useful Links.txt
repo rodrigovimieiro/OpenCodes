@@ -1,0 +1,38 @@
+
+-------------------------------------------------------------------
+Online courses
+
+
+%% Udacity %%
+Course Udacity -> https://classroom.udacity.com/courses/cs344
+Udacity course repository -> https://github.com/udacity/cs344
+Udacity course forum -> https://discussions.udacity.com/c/standalone-courses/intro-to-parallel-programming
+Udacity course problems solution -> https://github.com/ibebrett/CUDA-CS344
+
+-------------------------------------------------------------------
+CUDA Documentation
+
+https://docs.nvidia.com/cuda/index.html
+
+-------------------------------------------------------------------
+Existing University Courses - Nvidia
+
+https://developer.nvidia.com/educators/existing-courses
+
+
+-------------------------------------------------------------------
+
+Nsight Visual Studio Debugger
+Video -> http://developer.download.nvidia.com/gameworks/webinars/Profiling-Optimizing-CUDA-Kernel-Code-NVIDIA-Nsight-3_0.mp4
+
+Link Debugger to Matlab - Mexfiles
+https://www.mathworks.com/matlabcentral/answers/88541-failed-to-attach-matlab-in-visual-studio-2010-in-order-to-debug-cuda-kernel
+https://stackoverflow.com/questions/34881799/nsight-attach-shows-no-available-processes
+
+Compile and Debug CUDA enabled mex-file
+http://yjxiong.me/others/cuda_mex_vs.html#build-it-with-visual-studio
+https://stackoverflow.com/questions/16716821/how-to-build-mex-file-directly-in-visual-studio
+
+Nvidia Visual Profiler - Matlab
+https://stackoverflow.com/questions/11732840/how-to-profile-cuda-using-nvidia-visual-profile-with-matlab
+
