@@ -1,0 +1,10 @@
+
+
+
+							MATLAB
+-------------------------------------------------------------------
+   Command to keep compiling mex file on VS with Matlab running
+
+reset(gpuDevice(1));clear functions
+
+-------------------------------------------------------------------
