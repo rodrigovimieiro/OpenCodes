@@ -1,0 +1,11 @@
+﻿
+-------------------------------------------------------------------
+							 OpenMP
+-------------------------------------------------------------------
+
+Command to compile on linux:
+
+C++ - > g++ yourprogram.cpp -o yourprogram -fopenmp
+c - > gcc yourprogram.cpp -o yourprogram -fopenmp
+
+
