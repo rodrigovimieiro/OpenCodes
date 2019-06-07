@@ -41,13 +41,13 @@ draw = 0;
 %% Geometry Definitions
 
 % Geometry
-geo.DSD = 100000;%70;       % Distance from source to detector (mm)
-geo.DSO =  99700;%50;       % Distance from source to iso-center
-geo.pSize = 1;              % Square pixel size (mm)
-geo.dSize = 0.5;            % Square detector size (mm)
+geo.DSD = 100000;       % Distance from source to detector (mm)
+geo.DSO =  99700;       % Distance from source to iso-center
+geo.pSize = 1;          % Square pixel size (mm)
+geo.dSize = 0.5;        % Square detector size (mm)
 
-geo.nPix = 256;%20;         % Number of pixels elements (Row and Col)
-geo.nDet = 1024;%50;        % Number of detector elements
+geo.nPix = 256;         % Number of pixels elements (Row and Col)
+geo.nDet = 1024;        % Number of detector elements
 
 % Angle
 deg = 1;
@@ -63,11 +63,9 @@ phantomImg = mat2gray(phantomImg); % set min of image to zero
 
 % Projection
 sinogramB = projectionBranchless(phantomImg,geo);
-load sino.mat
 
 % Back-projection
-imageB = backprojection(sinogram,geo);
-load image.mat
+imageB = backprojection(sinogramB,geo);
 
 %% Projection Branchless
 function sinogram = projectionBranchless(phantom,geo)
