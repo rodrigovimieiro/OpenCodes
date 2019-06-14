@@ -6,6 +6,7 @@
 ### Commands to compile on unix based systems:
 
 C++ - > `g++ yourprogram.cpp -o yourprogram -fopenmp`
+
 C - > `gcc yourprogram.c -o yourprogram -fopenmp`
 
 

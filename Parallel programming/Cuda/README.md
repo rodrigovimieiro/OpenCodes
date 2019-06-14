@@ -14,20 +14,20 @@
 
 
  - Commands to attach MATLAB on [NSight](https://developer.nvidia.com/nsight-visual-studio-edition):
-	1 - Run VS and NSight as administrator
-	2 - Go to Debug -> Attach to Process -> Copy Qualifier name -> Change Transport to NSight VSE Debugger -> Paste Qualifier name -> Find MATLAB process and attach it.
-	3 - Put a breakpoint on VS
-	4 - Run the MATLAB code
+	1. Run VS and NSight as administrator
+	2. Go to Debug -> Attach to Process -> Copy Qualifier name -> Change Transport to NSight VSE Debugger -> Paste Qualifier name -> Find MATLAB process and attach it.
+	3. Put a breakpoint on VS
+	4. Run the MATLAB code
 
  - Commands to run NVIDIA [Visual Profiler](https://developer.nvidia.com/nvidia-visual-profiler) with MATLAB:
 
-	1 - Run Visual Profiler as administrator
-	2 - Add cudaDeviceReset() at the end of your mexfunction.
-	3 - Write your MATLAB.m file end add `exit` at its end.
-	4 - File -> New Session -> File: C:\Program Files\MATLAB\R2017b\bin\win64\matlab.exe
-	5 - Working directory: C:\Users\user1\Documents\Rodrigo\DBT-Reconstruction\Functions\IgnoreFunctions
-	6 - Arguments: -nojvm -nosplash -r cudatest
-	[Reference](https://stackoverflow.com/questions/11732840/how-to-profile-cuda-using-nvidia-visual-profile-with-matlab)
+	1. Run Visual Profiler as administrator
+	2. Add cudaDeviceReset() at the end of your mexfunction.
+	3. Write your MATLAB.m file end add `exit` at its end.
+	4. File -> New Session -> File: C:\Program Files\MATLAB\R2017b\bin\win64\matlab.exe
+	5. Working directory: C:\Users\user1\Documents\Rodrigo\DBT-Reconstruction\Functions\IgnoreFunctions
+	6. Arguments: -nojvm -nosplash -r cudatest
+	7. [Reference](https://stackoverflow.com/questions/11732840/how-to-profile-cuda-using-nvidia-visual-profile-with-matlab)
 	
 	
 	
@@ -37,13 +37,13 @@
 
 
  - Udacity:
- [Course Udacity](https://classroom.udacity.com/courses/cs344)
- [Udacity course Git repository](https://github.com/udacity/cs344)
- [Udacity course forum](https://discussions.udacity.com/c/standalone-courses/intro-to-parallel-programming)
- [Udacity course problems solution](https://github.com/ibebrett/CUDA-CS344)
+	* [Course Udacity](https://classroom.udacity.com/courses/cs344)
+	* [Udacity course Git repository](https://github.com/udacity/cs344)
+	* [Udacity course forum](https://discussions.udacity.com/c/standalone-courses/intro-to-parallel-programming)
+	* [Udacity course problems solution](https://github.com/ibebrett/CUDA-CS344)
  
-  - Existing University Courses - Nvidia
- [Nvidia website](https://developer.nvidia.com/educators/existing-courses)
+  - Existing University Courses - Nvidia:
+	* [Nvidia website](https://developer.nvidia.com/educators/existing-courses)
 
 **CUDA documentation:**
  
