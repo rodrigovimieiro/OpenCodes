@@ -50,6 +50,6 @@
   - [From NVIDIA](https://docs.nvidia.com/cuda/index.html)
   - [Nsight Visual Studio Debugger](http://developer.download.nvidia.com/gameworks/webinars/Profiling-Optimizing-CUDA-Kernel-Code-NVIDIA-Nsight-3_0.mp4)
   - Link Debugger to Matlab - Mexfiles [[1](https://www.mathworks.com/matlabcentral/answers/88541-failed-to-attach-matlab-in-visual-studio-2010-in-order-to-debug-cuda-kernel)][[2](https://stackoverflow.com/questions/34881799/nsight-attach-shows-no-available-processes)]
-  - Compile and Debug CUDA enabled mex-file [[1](http://yjxiong.me/others/cuda_mex_vs.html#build-it-with-visual-studio)][[2](https://stackoverflow.com/questions/16716821/how-to-build-mex-file-directly-in-visual-studio)]
+  - Compile and Debug CUDA enabled mex-file [[1](http://yjxiong.me/others/cuda_mex_vs.html#build-it-with-visual-studio)][[2](https://stackoverflow.com/questions/16716821/how-to-build-mex-file-directly-in-visual-studio)] [[3](http://www.orangeowlsolutions.com/archives/2044)]
   - Nvidia Visual Profiler - Matlab [[1](https://stackoverflow.com/questions/11732840/how-to-profile-cuda-using-nvidia-visual-profile-with-matlab)]
   
