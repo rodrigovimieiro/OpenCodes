@@ -5,7 +5,7 @@
 
 * [MIT 6.S191](http://introtodeeplearning.com/): Introduction to Deep Learning [(Github)](https://github.com/aamini/introtodeeplearning_labs)
 * [Kaggle](https://www.kaggle.com/learn/deep-learning): Deep Learning (Practical)
-* ICMC - Deep Learning Study Group (Portuguese)
+* ICMC - Deep Learning Study Group (Portuguese)([Google Drive](https://drive.google.com/drive/folders/1-zA2ox3izQ-99r4xrs5epHDg1lxSzBOH))
    * [Aula 1](https://www.youtube.com/watch?v=quRfTj7Fp40)
    * [Aula 2](https://www.youtube.com/watch?v=tYa5CPLlORc)
    * [Aula 3](https://www.youtube.com/watch?v=jEgWrZcOSQ4)
