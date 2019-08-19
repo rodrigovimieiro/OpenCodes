@@ -1,5 +1,35 @@
 """
-
+% Author: Rodrigo de Barros Vimieiro
+% Date: August, 2019
+% rodrigo.vimieiro@gmail.com
+% =========================================================================
+% 
+%     DESCRIPTION:
+% 
+% 
+%     Department of Electrical and Computer Engineering, 
+%     São Carlos School of Engineering, 
+%     University of São Paulo, 
+%     São Carlos, Brazil.
+% 
+%     ---------------------------------------------------------------------
+%     Copyright (C) <2018>  <Rodrigo de Barros Vimieiro>
+% 
+%     This program is free software: you can redistribute it and/or modify
+%     it under the terms of the GNU General Public License as published by
+%     the Free Software Foundation, either version 3 of the License, or
+%     (at your option) any later version.
+% 
+%     This program is distributed in the hope that it will be useful,
+%     but WITHOUT ANY WARRANTY; without even the implied warranty of
+%     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%     GNU General Public License for more details.
+% 
+%     You should have received a copy of the GNU General Public License
+%     along with this program.  If not, see <http://www.gnu.org/licenses/>.    
+%  
+%
+% =========================================================================
 """
 
 #%%
@@ -40,7 +70,7 @@ def data_posprocess(prediction,top):
     return prediction_out
 
 #%%
-def data_show(prediction,y_labels,nimages):
+def data_show(x_test,y_test,prediction,nimages):
     
     
     fashion_mnist_labels = ["T-shirt/top",  # index 0
@@ -58,12 +88,13 @@ def data_show(prediction,y_labels,nimages):
     
     figure = plt.figure(figsize=(14, 6))
     
-    for i, index in enumerate(nrandom):
-        subplot = figure.add_subplot(3, 5, i + 1, xticks=[], yticks=[])
+    for k, nrand in enumerate(nrandom):
+        subplot = figure.add_subplot(3, 5, k + 1, xticks=[], yticks=[])
         
-        predict_index = prediction[index][0]
-        true_index = np.argmax(y_test[index])
-        subplot.imshow(np.squeeze(x_test[index])) 
+        predict_index = prediction[nrand][0]
+        true_index = np.argmax(y_test[nrand])
+        
+        subplot.imshow(np.squeeze(x_test[nrand])) 
         subplot.set_title("{}".format(fashion_mnist_labels[predict_index]), 
                     color=("green" if predict_index == true_index else "red"))
     
@@ -102,6 +133,8 @@ model.add(Flatten())
 model.add(Dense(128, activation='relu'))
 model.add(Dense(param['num_classes'], activation='softmax'))
 
+model.summary() 
+
 # Compile it
 model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer='adam',
@@ -121,7 +154,7 @@ preds = model.predict(x_test)
 preds = data_posprocess(preds,top=1)
 
 # Show some predicted labels
-data_show(preds, y_test, nimages=15)
+data_show(x_test, y_test, preds, nimages=15)
 
 
 #%%
