@@ -10,15 +10,23 @@ import matplotlib.pyplot as plt
 
 #%%
 
-mean = 5
-std = 10
+# Generating the signal
+x = np.linspace(0,100,10000)
 
-array = std * np.random.randn(10000) + mean
+y = np.sin(x) + np.sin(2*x) + np.sin(3*x)
 
 plt.figure(1)
-plt.hist(array,bins=100)
+plt.title('Time domain')
+plt.plot(x,y)
 
+# FFT
 
+Y = np.fft.fft(y)
 
+Ymag = np.abs(Y)
 
+plt.figure(2)
+plt.title('Freq domain')
+plt.plot(x,Ymag)
+    
 

@@ -10,13 +10,17 @@ import matplotlib.pyplot as plt
 
 #%%
 
-mean = 5
-std = 10
+mean = [5,5]
+std = [1,10]
 
-array = std * np.random.randn(10000) + mean
+array = np.random.randn(10000,2)
+
+array[:,0] = std[0] * array[:,0] + mean[0]
+array[:,1] = std[1] * array[:,1] + mean[1]
 
 plt.figure(1)
-plt.hist(array,bins=100)
+plt.axis('equal')
+plt.scatter(array[:,0],array[:,1])
 
 
 
