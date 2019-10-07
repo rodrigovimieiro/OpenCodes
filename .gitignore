@@ -12,6 +12,7 @@
 *.DS_store
 so.*
 *.pdf
+*.bin
 
 # Images
 
