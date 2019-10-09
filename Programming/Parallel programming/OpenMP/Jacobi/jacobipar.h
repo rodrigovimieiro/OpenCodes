@@ -23,20 +23,20 @@ rodrigo.vimieiro@gmail.com
 
 #define PRECISION 0.001
 
-bool showAuxInf = true;
+bool showAuxInf = false;
 
 #include "generateRandNumbers.c"
 #include "write2file.c"
 
-int convergenceTest(float* const A,
+int convergenceTest(double* const A,
                     unsigned int rank,
                     unsigned int nTreads);
 
-void solveJacobi(float* const A,
-                 float* const x,
-                 float* const b,
+void solveJacobi(double* const A,
+                 double* const x,
+                 double* const b,
                  unsigned int rank,
-                 const float epsilon,
+                 const double epsilon,
                  unsigned int *nIter,
                  unsigned int nTreads);
 

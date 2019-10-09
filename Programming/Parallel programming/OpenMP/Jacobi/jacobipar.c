@@ -49,14 +49,19 @@ int main(int argc,char **argv){
 
 
 
-    const float epsilon = PRECISION;
+    const double epsilon = PRECISION;
 
-    float b_hat[rank];
+    double b_hat[rank];
 
     // Memory allocation for matrix A, x and b
-	float* const A = (float*)malloc(rank*rank * sizeof(float));
-    float* const x = (float*)malloc(rank * sizeof(float));
-    float* const b = (float*)malloc(rank * sizeof(float));
+	double* const A = (double*)malloc(rank*rank * sizeof(double));
+    double* const x = (double*)malloc(rank * sizeof(double));
+    double* const b = (double*)malloc(rank * sizeof(double));
+
+    if((A == NULL)&&(x == NULL)&&(b == NULL)){
+        printf("*** malloc Error ***\n");
+        return 0;
+    }
 
     double wtime = omp_get_wtime();
 
@@ -73,12 +78,12 @@ int main(int argc,char **argv){
 
     b[0] = 7;b[1] = -8;b[2] = 6; */
     
-    
-    printf("\n\n***************\n\n");
 
     // Show preliminary informations
     if(showAuxInf){
 
+        printf("\n\n***************\n\n");
+        
         printf("\nMatrix rank: %d \n",rank);
 
         printf("\nNumber of threads: %d \n",nTreads);
@@ -118,22 +123,22 @@ int main(int argc,char **argv){
 
     double finalTime = omp_get_wtime ( ) - wtime;
 
-    
-    // print informations
-    printf("\nx = [");
-    for(int i = 0; i < rank; i++)
-                printf("%.2f ",x[i]); 
-    printf("]\n");
+    if(showAuxInf){
+        // print informations
+        printf("\nx = [");
+        for(int i = 0; i < rank; i++)
+                    printf("%.2f ",x[i]); 
+        printf("]\n");
 
-    printf("\nb# = [");
-    for(int i = 0; i < rank; i++)
-                printf("%.2f ",b_hat[i]); 
-    printf("]\n");
+        printf("\nb# = [");
+        for(int i = 0; i < rank; i++)
+                    printf("%.2f ",b_hat[i]); 
+        printf("]\n");
 
-    printf("\nTempo: %f \n",finalTime); 
+        printf("\nTempo: %f \n",finalTime); 
 
-    printf("\n\n***************\n\n");
-
+        printf("\n\n***************\n\n");
+    }
 
     write2file(finalTime,nIter,nTreads);
 
@@ -144,11 +149,11 @@ int main(int argc,char **argv){
 }
 
 // Test if matrix A will converge
-int convergenceTest(float* const A,
+int convergenceTest(double* const A,
                     unsigned int rank,
                     unsigned int nTreads){
 
-    float alpha[rank];
+    double alpha[rank];
     unsigned int convergence=0;    
 
     // Calculate alpha to test convergence
@@ -183,16 +188,16 @@ int convergenceTest(float* const A,
 }
 
 // Solve Ax=b through Jacobi method
-void solveJacobi(float* const A,
-                 float* const x,
-                 float* const b,
+void solveJacobi(double* const A,
+                 double* const x,
+                 double* const b,
                  unsigned int rank,
-                 const float epsilon,
+                 const double epsilon,
                  unsigned int *nIter,
                  unsigned int nTreads){
 
-    float x_k[rank];
-    float iterate = true;
+    double x_k[rank];
+    double iterate = true;
     unsigned int iterN = 0;
 
     // Generate x0
@@ -216,7 +221,7 @@ void solveJacobi(float* const A,
         #pragma omp parallel for schedule(static) num_threads(nTreads)
         for(int i=0; i<rank; i++){
 
-            float sum = 0;
+            double sum = 0;
             for(int j=0; j<rank; j++){
                 if(j != i)
                     sum += -A[i*rank+j] * x_k[j];

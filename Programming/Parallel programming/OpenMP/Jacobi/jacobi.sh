@@ -8,22 +8,23 @@
 
 make
 
-FILE=jacobipar.bin
+FILE1=jacobipar.bin
+FILE2=jacobiseq.bin
 
-rank=5
+rank=20000
 
-if [ -f "$FILE" ]; then
-     echo "$FILE exist"
-     for i in {1..100}
-          do
-               echo === Test $i ====
-               ./jacobiseq.bin $rank 1;
-               ./jacobipar.bin $rank 2;
-               ./jacobipar.bin $rank 4;
-               ./jacobipar.bin $rank 8;
-          done
+if [[ -f "$FILE1" && -f "$FILE2" ]]; then
+     
+     for i in {1..50}
+     do
+          echo === Test $i ====
+          ./jacobiseq.bin $rank 1;
+          ./jacobipar.bin $rank 2;
+          ./jacobipar.bin $rank 4;
+          ./jacobipar.bin $rank 8;
+     done
 
-     python3 jacobiparCalcTime.py
+     python3 jacobiCalcTime.py
 
      rm -R output
 
