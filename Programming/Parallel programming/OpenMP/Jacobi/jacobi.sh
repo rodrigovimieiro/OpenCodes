@@ -6,6 +6,8 @@
 
 #!/bin/bash
 
+make
+
 FILE=jacobipar.bin
 
 rank=5
@@ -15,7 +17,7 @@ if [ -f "$FILE" ]; then
      for i in {1..100}
           do
                echo === Test $i ====
-               ./jacobipar.bin $rank 1;
+               ./jacobiseq.bin $rank 1;
                ./jacobipar.bin $rank 2;
                ./jacobipar.bin $rank 4;
                ./jacobipar.bin $rank 8;

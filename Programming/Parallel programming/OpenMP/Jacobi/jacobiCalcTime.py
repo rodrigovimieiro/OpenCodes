@@ -76,8 +76,8 @@ for count, f in enumerate(txtFiles,-1):
 
 
 #%%
-path_figure = '/home/rodrigo/Downloads/Relatorio/figures'
-path_csv = '/home/rodrigo/Downloads/Relatorio/table'
+path_figure = 'figures'
+path_csv = 'table'
 
 if not os.path.exists(path_figure):
     os.makedirs(path_figure)

@@ -18,7 +18,7 @@ Compile it -> gcc jacobipar.c -o jacobipar.bin -fopenmp
 */
 int main(int argc,char **argv){
 
-    unsigned int rank = 3, nTreads = 8;
+    unsigned int rank, nTreads;
     unsigned int nIter;
 
     // Test if the arguments are correct
@@ -49,7 +49,7 @@ int main(int argc,char **argv){
 
 
 
-    const float epsilon = 0.001;
+    const float epsilon = PRECISION;
 
     float b_hat[rank];
 
@@ -65,17 +65,7 @@ int main(int argc,char **argv){
 
 
     // Generate random numebers 0-10 to place on matrix A
-    #pragma omp parallel for schedule(static) num_threads(nTreads)
-    for(int i = 0; i < rank; i++){
-        b[i] = (float) ((double)rand()/(double)(RAND_MAX/10));
-        for(int j = 0; j < rank; j++){
-            A[i*rank+j] = (float) ((double)rand()/(double)(RAND_MAX/10));
-
-            if(i == j)
-                A[i*rank+j] *= 1000;
-        }
-    }
-
+    generateRandNumbers(A,b,rank,nTreads);
             
 /*     A[0] = 4;A[1] = 2;A[2] = 1;
     A[3] = 1;A[4] = 3;A[5] = 1;
@@ -257,44 +247,13 @@ void solveJacobi(float* const A,
         else
             // Iteration continues...
             // Place x^{k+1} into x^{k}
-             #pragma omp parallel for schedule(static) num_threads(nTreads)
+            #pragma omp parallel for schedule(static) num_threads(nTreads)
             for(int i=0; i<rank; i++)
                 x_k[i] = x[i];  
 
     }  
 
     nIter[0] =  iterN; 
-
-    return;
-
-}
-
-// Write to file
-void write2file(double finalTime,
-                unsigned int nIter,
-                unsigned int nTreads){
-
-    char filename[30];
-
-    struct stat st = {0};
-
-    if (stat("output", &st) == -1) {
-        mkdir("output", 0700);
-    }
-
-    snprintf(filename,14,"output/time_%d",nTreads);
-    strcat(filename,".txt");
-    
-    // Open for append. Data is added to the end of the file.
-    FILE *pFile = fopen (filename,"a");
-
-    if (pFile==NULL) perror ("Error opening file");
-    else
-    {
-        fprintf(pFile, "%.5f %d\n",finalTime,nIter);
-
-        fclose (pFile);
-    }
 
     return;
 

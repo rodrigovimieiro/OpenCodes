@@ -21,7 +21,12 @@ rodrigo.vimieiro@gmail.com
 #include <sys/stat.h>
 #include <unistd.h>
 
+#define PRECISION 0.001
+
 bool showAuxInf = true;
+
+#include "generateRandNumbers.c"
+#include "write2file.c"
 
 int convergenceTest(float* const A,
                     unsigned int rank,
@@ -35,6 +40,3 @@ void solveJacobi(float* const A,
                  unsigned int *nIter,
                  unsigned int nTreads);
 
-void write2file(double finalTime,
-                unsigned int nIter,
-                unsigned int nTreads);
