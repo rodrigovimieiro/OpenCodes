@@ -65,22 +65,23 @@ int main(int argc,char **argv){
 
 
     // Generate random numebers 0-10 to place on matrix A
+    #pragma omp parallel for schedule(static) num_threads(nTreads)
     for(int i = 0; i < rank; i++){
         b[i] = (float) ((double)rand()/(double)(RAND_MAX/10));
         for(int j = 0; j < rank; j++){
             A[i*rank+j] = (float) ((double)rand()/(double)(RAND_MAX/10));
 
             if(i == j)
-                A[i*rank+j] += 10;
+                A[i*rank+j] *= 1000;
         }
     }
 
             
-    A[0] = 4;A[1] = 2;A[2] = 1;
+/*     A[0] = 4;A[1] = 2;A[2] = 1;
     A[3] = 1;A[4] = 3;A[5] = 1;
     A[6] = 2;A[7] = 3;A[8] = 6;
 
-    b[0] = 7;b[1] = -8;b[2] = 6;
+    b[0] = 7;b[1] = -8;b[2] = 6; */
     
     
     printf("\n\n***************\n\n");
@@ -118,6 +119,7 @@ int main(int argc,char **argv){
 
 
     // Solve b with calculated x
+    #pragma omp parallel for schedule(static) num_threads(nTreads)
     for(int i = 0; i < rank; i++){
         b_hat[i] = 0;
         for(int j = 0; j < rank; j++)
@@ -160,6 +162,7 @@ int convergenceTest(float* const A,
     unsigned int convergence=0;    
 
     // Calculate alpha to test convergence
+    #pragma omp parallel for schedule(static) num_threads(nTreads) reduction(+:convergence)
     for(int k = 0; k < rank; k++){
 
         alpha[k] = 0;
@@ -204,8 +207,8 @@ void solveJacobi(float* const A,
 
     // Generate x0
     #pragma omp parallel for schedule(static) num_threads(nTreads)
-        for(int i=0; i<rank; i++)
-            x_k[i] = b[i] / A[i*rank+i];
+    for(int i=0; i<rank; i++)
+        x_k[i] = b[i] / A[i*rank+i];
 
     // Show x0
     if(showAuxInf){
@@ -220,6 +223,7 @@ void solveJacobi(float* const A,
         iterN++;
 
         // Calculate x^{k+1}
+        #pragma omp parallel for schedule(static) num_threads(nTreads)
         for(int i=0; i<rank; i++){
 
             float sum = 0;
@@ -242,6 +246,7 @@ void solveJacobi(float* const A,
 
         // Calculate difference x^{k+1} - x^{k}
         unsigned int stop = 0;
+        #pragma omp parallel for schedule(static) num_threads(nTreads) reduction(+:stop)
         for(int i=0; i<rank; i++)
             if(fabs(x[i] - x_k[i]) < epsilon)
                 stop++;
@@ -252,6 +257,7 @@ void solveJacobi(float* const A,
         else
             // Iteration continues...
             // Place x^{k+1} into x^{k}
+             #pragma omp parallel for schedule(static) num_threads(nTreads)
             for(int i=0; i<rank; i++)
                 x_k[i] = x[i];  
 

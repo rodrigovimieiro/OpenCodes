@@ -8,15 +8,17 @@
 
 FILE=jacobipar.bin
 
+rank=5
+
 if [ -f "$FILE" ]; then
      echo "$FILE exist"
-     for i in {1..30}
+     for i in {1..100}
           do
                echo === Test $i ====
-               ./jacobipar.bin 3 1;
-               ./jacobipar.bin 3 2;
-               ./jacobipar.bin 3 4;
-               ./jacobipar.bin 3 8;
+               ./jacobipar.bin $rank 1;
+               ./jacobipar.bin $rank 2;
+               ./jacobipar.bin $rank 4;
+               ./jacobipar.bin $rank 8;
           done
 
      python3 jacobiparCalcTime.py
