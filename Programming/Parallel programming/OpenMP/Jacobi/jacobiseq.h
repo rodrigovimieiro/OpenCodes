@@ -11,7 +11,6 @@ rodrigo.vimieiro@gmail.com
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <omp.h>
 #include <time.h>
 #include <stdbool.h>
 #include <limits.h>
