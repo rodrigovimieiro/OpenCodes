@@ -130,6 +130,11 @@ int main(int argc,char **argv){
                     printf("%.2f ",x[i]); 
         printf("]\n");
 
+        printf("\nb = [");
+        for(int i = 0; i < rank; i++)
+                    printf("%.2f ",b[i]); 
+        printf("]\n");
+
         printf("\nb# = [");
         for(int i = 0; i < rank; i++)
                     printf("%.2f ",b_hat[i]); 
@@ -197,7 +202,7 @@ void solveJacobi(double* const A,
                  unsigned int nTreads){
 
     double x_k[rank];
-    double iterate = true;
+    bool iterate = true;
     unsigned int iterN = 0;
 
     // Generate x0
@@ -217,8 +222,10 @@ void solveJacobi(double* const A,
 
         iterN++;
 
+        double maxXi = 0, maxDiffXi = 0;
+        double absXi, absDiffXi;
         // Calculate x^{k+1}
-        #pragma omp parallel for schedule(static) num_threads(nTreads)
+        #pragma omp parallel for schedule(static) num_threads(nTreads) reduction(max:maxXi) reduction(max:maxDiffXi)
         for(int i=0; i<rank; i++){
 
             double sum = 0;
@@ -228,6 +235,16 @@ void solveJacobi(double* const A,
             }
 
             x[i] = (b[i] + sum) / A[i*rank+i];
+
+            // Find the max x^{k+1} element
+            absXi = fabs(x[i]);
+            if(absXi > maxXi)
+                maxXi = absXi;
+
+            // Find the max x^{k+1}-x^{k} diference
+            absDiffXi = fabs(x[i] - x_k[i]);
+            if(absDiffXi > maxDiffXi)
+                maxDiffXi = absDiffXi;  
 
         }
 
@@ -240,13 +257,7 @@ void solveJacobi(double* const A,
         }
 
         // Calculate difference x^{k+1} - x^{k}
-        unsigned int stop = 0;
-        #pragma omp parallel for schedule(static) num_threads(nTreads) reduction(+:stop)
-        for(int i=0; i<rank; i++)
-            if(fabs(x[i] - x_k[i]) < epsilon)
-                stop++;
-
-        if(stop == rank)
+        if((maxDiffXi/maxXi) < epsilon)
             // Iteration stop!!
             iterate = false;
         else

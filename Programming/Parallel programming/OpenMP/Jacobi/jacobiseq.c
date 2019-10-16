@@ -29,7 +29,7 @@ int main(int argc,char **argv){
         errno = 0;
 
         rank = (unsigned int) strtol(argv[1], &p, 10);
-        nTreads = (unsigned int) strtol(argv[2], &p, 10);
+        nTreads = 1;
 
         // https://stackoverflow.com/a/9748431/8682939
         // Check for errors: e.g., the string does not represent an integer
@@ -129,6 +129,11 @@ int main(int argc,char **argv){
                     printf("%.2f ",x[i]); 
         printf("]\n");
 
+        printf("\nb = [");
+        for(int i = 0; i < rank; i++)
+                    printf("%.2f ",b[i]); 
+        printf("]\n");
+
         printf("\nb# = [");
         for(int i = 0; i < rank; i++)
                     printf("%.2f ",b_hat[i]); 
@@ -196,7 +201,7 @@ void solveJacobi(double* const A,
                  unsigned int nTreads){
 
     double x_k[rank];
-    double iterate = true;
+    bool iterate = true;
     unsigned int iterN = 0;
 
     // Generate x0
@@ -215,6 +220,8 @@ void solveJacobi(double* const A,
 
         iterN++;
 
+        double maxXi = 0, maxDiffXi = 0;
+        double absXi, absDiffXi;
         // Calculate x^{k+1}
         for(int i=0; i<rank; i++){
 
@@ -226,6 +233,15 @@ void solveJacobi(double* const A,
 
             x[i] = (b[i] + sum) / A[i*rank+i];
 
+            // Find the max x^{k+1} element
+            absXi = fabs(x[i]);
+            if(absXi > maxXi)
+                maxXi = absXi;
+
+            // Find the max x^{k+1}-x^{k} diference
+            absDiffXi = fabs(x[i] - x_k[i]);
+            if(absDiffXi > maxDiffXi)
+                maxDiffXi = absDiffXi;    
         }
 
         // Show x^{k+1}
@@ -237,12 +253,8 @@ void solveJacobi(double* const A,
         }
 
         // Calculate difference x^{k+1} - x^{k}
-        unsigned int stop = 0;
-        for(int i=0; i<rank; i++)
-            if(fabs(x[i] - x_k[i]) < epsilon)
-                stop++;
-
-        if(stop == rank)
+        
+        if((maxDiffXi/maxXi) < epsilon)
             // Iteration stop!!
             iterate = false;
         else

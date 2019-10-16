@@ -11,11 +11,11 @@ make
 FILE1=jacobipar.bin
 FILE2=jacobiseq.bin
 
-rank=20000
+rank=3000
 
 if [[ -f "$FILE1" && -f "$FILE2" ]]; then
      
-     for i in {1..50}
+     for i in {1..30}
      do
           echo === Test $i ====
           ./jacobiseq.bin $rank 1;
