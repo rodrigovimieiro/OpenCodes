@@ -102,19 +102,24 @@ int main(int argc,char **argv){
 
     MPI_Comm interCommCity, interCommRegion, interCommCountry;
     MPI_Status status;
+    MPI_Info info;
 
     MPI_Init(&argc, &argv);
 	MPI_Comm_size(MPI_COMM_WORLD, &npes);
 	MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
 
+    // These lines are intend to spawn on different nodes
+    MPI_Info_create(&info);
+    MPI_Info_set( info, "file", "halley.txt");
+
     // Create slaves for cities calculations
-    MPI_Comm_spawn("studentspar_slave.bin", MPI_ARGV_NULL, nRegions*nCity, MPI_INFO_NULL, 0, MPI_COMM_WORLD, &interCommCity, errcodes);
+    MPI_Comm_spawn("studentspar_slave.bin", MPI_ARGV_NULL, nRegions*nCity, info, 0, MPI_COMM_WORLD, &interCommCity, errcodes);
 
     // Create slaves for regions calculations
-    MPI_Comm_spawn("studentspar_slave.bin", MPI_ARGV_NULL, nRegions, MPI_INFO_NULL, 0, MPI_COMM_WORLD, &interCommRegion, errcodes);
+    MPI_Comm_spawn("studentspar_slave.bin", MPI_ARGV_NULL, nRegions, info, 0, MPI_COMM_WORLD, &interCommRegion, errcodes);
 
     // Create slaves for country calculations
-    MPI_Comm_spawn("studentspar_slave.bin", MPI_ARGV_NULL, 1, MPI_INFO_NULL, 0, MPI_COMM_WORLD, &interCommCountry, errcodes);
+    MPI_Comm_spawn("studentspar_slave.bin", MPI_ARGV_NULL, 1, info, 0, MPI_COMM_WORLD, &interCommCountry, errcodes);
 
 
     MPI_Bcast(&nRegions, 1, MPI_UNSIGNED, MPI_ROOT, interCommCity);
