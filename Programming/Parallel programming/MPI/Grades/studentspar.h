@@ -17,12 +17,13 @@ rodrigo.vimieiro@gmail.com
 #include <errno.h>
 #include <mpi.h>
 
-void findMax(unsigned int* mGrade, unsigned int* mMax, unsigned int* mInd, unsigned int sizeVec);
-void findMin(unsigned int* mGrade, unsigned int* mMin, unsigned int sizeVec);
-void findMedian(unsigned int* mGrade, double* mMedian, unsigned int sizeVec);
-void findMean(unsigned int* mGrade, double* mMean, unsigned int sizeVec);
-void findMeanF(double* mGrade, double* mMean, unsigned int sizeVec);
-void calcStd(unsigned int* mGrade, double mean, double* mStd, unsigned int sizeVec);
+#define NCORES 20 // 51   // Number of cores - 1
+
+void findMax(unsigned int* mGrade, unsigned int* mMax, unsigned int* mInd, unsigned int sizeVec, unsigned int nVec);
+void findMin(unsigned int* mGrade, unsigned int* mMin, unsigned int sizeVec, unsigned int nVec);
+void findMedian(unsigned int* mGrade, double* mMedian, unsigned int sizeVec, unsigned int nVec);
+void findMean(unsigned int* mGrade, double* mMean, unsigned int sizeVec, unsigned int nVec);
+void calcStd(unsigned int* mGrade, double* mean, double* mStd, unsigned int sizeVec, unsigned int nVec);
 
 // Adapted from: https://www.geeksforgeeks.org/quick-sort/
 int partition (unsigned int *arr, int low, int high);
