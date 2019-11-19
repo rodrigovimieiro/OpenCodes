@@ -15,9 +15,10 @@ rodrigo.vimieiro@gmail.com
 #include <stdbool.h>
 #include <limits.h>
 #include <errno.h>
+#include <unistd.h>
 #include <mpi.h>
 
-#define NCORES 20 // 51   // Number of cores - 1
+#define NCORES 37 // 51   // Number of cores - 1
 
 void findMax(unsigned int* mGrade, unsigned int* mMax, unsigned int* mInd, unsigned int sizeVec, unsigned int nVec);
 void findMin(unsigned int* mGrade, unsigned int* mMin, unsigned int sizeVec, unsigned int nVec);

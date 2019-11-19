@@ -184,8 +184,9 @@ int main(int argc,char **argv){
 
 
 
-
-
+    MPI_Barrier(interCommCity);
+    MPI_Comm_disconnect(&interCommCity);
+    sleep(1);
 
 
 
@@ -255,9 +256,9 @@ int main(int argc,char **argv){
     MPI_Gatherv(&sendbuf, regionRatio, MPI_DOUBLE, mStdGradesRegions, recv_counts, displs, MPI_DOUBLE, MPI_ROOT, interCommRegion);
 
 
-
-
-
+    MPI_Barrier(interCommRegion);
+    MPI_Comm_disconnect(&interCommRegion);
+    sleep(1);
 
 
 printf("\n\n\n\n");
@@ -297,9 +298,9 @@ printf("\n\n\n\n");
 
 
 
-
-
-
+    MPI_Barrier(interCommCountry);
+    MPI_Comm_disconnect(&interCommCountry);
+    sleep(1);
 
 
     for(int l = 1; l <= nRegions; l++){

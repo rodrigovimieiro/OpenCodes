@@ -150,6 +150,10 @@ int main(int argc,char **argv){
         MPI_Gatherv(maxValueInd, nVec, MPI_UNSIGNED, &recvbuf, recv_counts, displs, MPI_UNSIGNED, 0, interCommParent);
     }
 
+    MPI_Barrier(interCommParent);
+
+    MPI_Comm_disconnect(&interCommParent);
+
     MPI_Finalize();
 
     return 0;
