@@ -18,7 +18,7 @@ rodrigo.vimieiro@gmail.com
 #include <unistd.h>
 #include <mpi.h>
 
-#define NCORES 37 // 51   // Number of cores - 1
+#define NCORES 48	// Number of cores
 
 void findMax(unsigned int* mGrade, unsigned int* mMax, unsigned int* mInd, unsigned int sizeVec, unsigned int nVec);
 void findMin(unsigned int* mGrade, unsigned int* mMin, unsigned int sizeVec, unsigned int nVec);

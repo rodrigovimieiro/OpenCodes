@@ -119,163 +119,23 @@ int main(int argc,char **argv){
     MPI_Info_set( info, "file", "halley.txt");
 
 
-    
+/*     char name[MPI_MAX_PROCESSOR_NAME];
+    int len;
+    MPI_Get_processor_name(name, &len);
+    printf("Hello, world.  I am %02d of %02d on %s | Who am I? Master. \n", myrank, npes, name); */
 
 
 
-
-    unsigned int cityRatio = nCityTotal / NCORES;
-    unsigned int cityRatioRemain = nCityTotal % NCORES;
-
-    //printf("Ratio:%d, remain:%d.\n",cityRatio,cityRatioRemain);
-
-
-    unsigned int tmp_sum = 0, cityRatioRemain_tmp = cityRatioRemain; 
-    for(int l = 0; l < NCORES; l++){
-        send_counts[l] = cityRatio * nStudent;
-
-        if (cityRatioRemain_tmp > 0) {
-            send_counts[l] += nStudent;
-            cityRatioRemain_tmp--;
-        }
-
-        displs[l] = tmp_sum;
-        tmp_sum += send_counts[l];
-        //printf("SendC[%d]: %d Displ: %d\n",l,send_counts[l],displs[l]);
-    }
-
-    if(cityRatio == 0){
-        // Create slaves for cities calculations
-        MPI_Comm_spawn("studentspar_slave.bin", argv+1, nCityTotal, info, 0, MPI_COMM_WORLD, &interCommCity, errcodes);
-    }
-    else{
-        // Create slaves for cities calculations
-        MPI_Comm_spawn("studentspar_slave.bin", argv+1, NCORES, info, 0, MPI_COMM_WORLD, &interCommCity, errcodes);
-    }
-
-    unsigned int whoAmI = 0;     // I am calculating for each city
-    MPI_Bcast(&whoAmI, 1, MPI_UNSIGNED, MPI_ROOT, interCommCity);
-
-    // Distribute data (each city) for slaves
-    MPI_Scatterv(mGrades, send_counts, displs, MPI_UNSIGNED, &recvbuf, nStudent, MPI_UNSIGNED, MPI_ROOT, interCommCity);
-    
-
-
-    tmp_sum = 0;
-    cityRatioRemain_tmp = cityRatioRemain;
-    for(int l = 0; l < NCORES; l++){
-        recv_counts[l] = cityRatio;
-
-        if (cityRatioRemain_tmp > 0) {
-            recv_counts[l]++;
-            cityRatioRemain_tmp--;
-        }
-
-        displs[l] = tmp_sum;
-        tmp_sum += recv_counts[l];
-        //printf("SendC[%d]: %d Displ: %d\n",l,recv_counts[l],displs[l]);
-    }
-    
-    MPI_Gatherv(&sendbuf, cityRatio, MPI_UNSIGNED, mMaxGradesCity, recv_counts, displs, MPI_UNSIGNED, MPI_ROOT, interCommCity);
-    MPI_Gatherv(&sendbuf, cityRatio, MPI_UNSIGNED, mMinGradesCity, recv_counts, displs, MPI_UNSIGNED, MPI_ROOT, interCommCity);
-    MPI_Gatherv(&sendbuf, cityRatio, MPI_DOUBLE, mMeanGradesCity, recv_counts, displs, MPI_DOUBLE, MPI_ROOT, interCommCity);
-    MPI_Gatherv(&sendbuf, cityRatio, MPI_DOUBLE, mMedianGradesCity, recv_counts, displs, MPI_DOUBLE, MPI_ROOT, interCommCity);
-    MPI_Gatherv(&sendbuf, cityRatio, MPI_DOUBLE, mStdGradesCity, recv_counts, displs, MPI_DOUBLE, MPI_ROOT, interCommCity);
-
-
-
-    MPI_Barrier(interCommCity);
-    MPI_Comm_disconnect(&interCommCity);
-    sleep(1);
-
-
-
-
-    printf("\n\n\n\n");
-
-
-
-
-
-
-
-
-    unsigned int regionRatio = nRegions / NCORES;
-    unsigned int regionRatioRemain = nRegions % NCORES;
-
-
-    tmp_sum = 0; 
-    unsigned int regionRatioRemain_tmp = regionRatioRemain; 
-    for(int l = 0; l < NCORES; l++){
-        send_counts[l] = regionRatio * (nStudent*nCity);
-
-        if (regionRatioRemain_tmp > 0) {
-            send_counts[l] += (nStudent*nCity);
-            regionRatioRemain_tmp--;
-        }
-
-        displs[l] = tmp_sum;
-        tmp_sum += send_counts[l];
-        //printf("SendC[%d]: %d Displ: %d\n",l,send_counts[l],displs[l]);
-    }
-
-    if(regionRatio == 0){
-        // Create slaves for regions calculations
-        MPI_Comm_spawn("studentspar_slave.bin", argv+1, nRegions, info, 0, MPI_COMM_WORLD, &interCommRegion, errcodes);
-    }
-    else{
-        // Create slaves for regions calculations
-        MPI_Comm_spawn("studentspar_slave.bin", argv+1, NCORES, info, 0, MPI_COMM_WORLD, &interCommRegion, errcodes);
-    }
-
-    whoAmI = 1;     // I am calculating for each region
-    MPI_Bcast(&whoAmI, 1, MPI_UNSIGNED, MPI_ROOT, interCommRegion);
-
-    // Distribute data (each region) for slaves
-    MPI_Scatterv(mGrades, send_counts, displs, MPI_UNSIGNED, &recvbuf, (nStudent*nCity), MPI_UNSIGNED, MPI_ROOT, interCommRegion);
-
-    tmp_sum = 0;
-    regionRatioRemain_tmp = regionRatioRemain;
-    for(int l = 0; l < NCORES; l++){
-        recv_counts[l] = regionRatio;
-
-        if (regionRatioRemain_tmp > 0) {
-            recv_counts[l]++;
-            regionRatioRemain_tmp--;
-        }
-
-        displs[l] = tmp_sum;
-        tmp_sum += recv_counts[l];
-        //printf("SendC[%d]: %d Displ: %d\n",l,recv_counts[l],displs[l]);
-    }
-    
-    MPI_Gatherv(&sendbuf, regionRatio, MPI_UNSIGNED, mMaxGradesRegions, recv_counts, displs, MPI_UNSIGNED, MPI_ROOT, interCommRegion);
-    MPI_Gatherv(&sendbuf, regionRatio, MPI_UNSIGNED, mMinGradesRegions, recv_counts, displs, MPI_UNSIGNED, MPI_ROOT, interCommRegion);
-    MPI_Gatherv(&sendbuf, regionRatio, MPI_DOUBLE, mMeanGradesRegions, recv_counts, displs, MPI_DOUBLE, MPI_ROOT, interCommRegion);
-    MPI_Gatherv(&sendbuf, regionRatio, MPI_DOUBLE, mMedianGradesRegions, recv_counts, displs, MPI_DOUBLE, MPI_ROOT, interCommRegion);
-    MPI_Gatherv(&sendbuf, regionRatio, MPI_DOUBLE, mStdGradesRegions, recv_counts, displs, MPI_DOUBLE, MPI_ROOT, interCommRegion);
-
-
-    MPI_Barrier(interCommRegion);
-    MPI_Comm_disconnect(&interCommRegion);
-    sleep(1);
-
-
-printf("\n\n\n\n");
-
-
-
-
-
-
-
-
-
+    // Get the number of available cores - 1 (master)
+    unsigned int nAvlbleCores = NCORES - 1;
 
     // Create slaves for country calculations
-    MPI_Comm_spawn("studentspar_slave.bin", argv+1, 1, info, 0, MPI_COMM_WORLD, &interCommCountry, errcodes);
+    MPI_Comm_spawn("studentspar_slave.bin", argv+1, 1, info, 0, MPI_COMM_WORLD, &interCommCountry, errcodes); //MPI_INFO_NULL
 
-    whoAmI = 2;     // I am calculating for the country
+    // 1 core in use
+    nAvlbleCores--;
+
+    unsigned int whoAmI = 2;     // I am calculating for the country
     MPI_Bcast(&whoAmI, 1, MPI_UNSIGNED, MPI_ROOT, interCommCountry);
 
     displs[0] = 0;
@@ -298,9 +158,103 @@ printf("\n\n\n\n");
 
 
 
-    MPI_Barrier(interCommCountry);
-    MPI_Comm_disconnect(&interCommCountry);
-    sleep(1);
+ 
+
+
+
+
+    // Create slaves for regions calculations
+    MPI_Comm_spawn("studentspar_slave.bin", argv+1, 1, info, 0, MPI_COMM_WORLD, &interCommRegion, errcodes);
+
+    // 1 core in use
+    nAvlbleCores--;
+
+
+    whoAmI = 1;     // I am calculating for each region
+    MPI_Bcast(&whoAmI, 1, MPI_UNSIGNED, MPI_ROOT, interCommRegion);
+
+    displs[0] = 0;
+    send_counts[0] = nRegions*nStudent*nCity;
+    recv_counts[0] = nRegions;
+
+    // Distribute data (each region) for slaves
+    MPI_Scatterv(mGrades, send_counts, displs, MPI_UNSIGNED, &recvbuf, (nStudent*nCity), MPI_UNSIGNED, MPI_ROOT, interCommRegion);
+
+    MPI_Gatherv(&sendbuf, 1, MPI_UNSIGNED, mMaxGradesRegions, recv_counts, displs, MPI_UNSIGNED, MPI_ROOT, interCommRegion);
+    MPI_Gatherv(&sendbuf, 1, MPI_UNSIGNED, mMinGradesRegions, recv_counts, displs, MPI_UNSIGNED, MPI_ROOT, interCommRegion);
+    MPI_Gatherv(&sendbuf, 1, MPI_DOUBLE, mMeanGradesRegions, recv_counts, displs, MPI_DOUBLE, MPI_ROOT, interCommRegion);
+    MPI_Gatherv(&sendbuf, 1, MPI_DOUBLE, mMedianGradesRegions, recv_counts, displs, MPI_DOUBLE, MPI_ROOT, interCommRegion);
+    MPI_Gatherv(&sendbuf, 1, MPI_DOUBLE, mStdGradesRegions, recv_counts, displs, MPI_DOUBLE, MPI_ROOT, interCommRegion);
+
+
+
+    
+
+
+
+
+
+    unsigned int ratioCity = nCityTotal / nAvlbleCores;
+    unsigned int ratioCityRemain = nCityTotal % nAvlbleCores;
+
+    unsigned int tmp_sum = 0;
+    unsigned int ratioCityRemain_tmp = ratioCityRemain; 
+
+    for(int l = 0; l < nAvlbleCores; l++){
+
+        send_counts[l] = ratioCity * nStudent;
+
+        if (ratioCityRemain_tmp > 0){
+            send_counts[l] += nStudent;
+            ratioCityRemain_tmp--;
+        }
+
+        displs[l] = tmp_sum;
+        //printf("Send_counts[%02d]:%02d Displs[%02d]:%02d\n",l,send_counts[l]/nStudent,l,displs[l]/nStudent);
+        tmp_sum += send_counts[l];
+    }
+
+    unsigned char cores2lauch;
+
+    if(ratioCity == 0)
+        cores2lauch = ratioCityRemain;
+    else
+        cores2lauch = nAvlbleCores;
+        
+
+    // Create slaves for cities calculations
+    MPI_Comm_spawn("studentspar_slave.bin", argv+1, cores2lauch, info, 0, MPI_COMM_WORLD, &interCommCity, errcodes);
+
+    whoAmI = 0;     // I am calculating for each city
+    MPI_Bcast(&whoAmI, 1, MPI_UNSIGNED, MPI_ROOT, interCommCity);
+
+    // Distribute data (each city) for slaves
+    MPI_Scatterv(mGrades, send_counts, displs, MPI_UNSIGNED, &recvbuf, nStudent, MPI_UNSIGNED, MPI_ROOT, interCommCity);
+    
+
+
+    tmp_sum = 0;
+    ratioCityRemain_tmp = ratioCityRemain;
+    for(int l = 0; l < nAvlbleCores; l++){
+        recv_counts[l] = ratioCity;
+
+        if (ratioCityRemain_tmp > 0) {
+            recv_counts[l]++;
+            ratioCityRemain_tmp--;
+        }
+
+        displs[l] = tmp_sum;
+        tmp_sum += recv_counts[l];
+        //printf("SendC[%d]: %d Displ: %d\n",l,recv_counts[l],displs[l]);
+    }
+    
+    MPI_Gatherv(&sendbuf, 1, MPI_UNSIGNED, mMaxGradesCity, recv_counts, displs, MPI_UNSIGNED, MPI_ROOT, interCommCity);
+    MPI_Gatherv(&sendbuf, 1, MPI_UNSIGNED, mMinGradesCity, recv_counts, displs, MPI_UNSIGNED, MPI_ROOT, interCommCity);
+    MPI_Gatherv(&sendbuf, 1, MPI_DOUBLE, mMeanGradesCity, recv_counts, displs, MPI_DOUBLE, MPI_ROOT, interCommCity);
+    MPI_Gatherv(&sendbuf, 1, MPI_DOUBLE, mMedianGradesCity, recv_counts, displs, MPI_DOUBLE, MPI_ROOT, interCommCity);
+    MPI_Gatherv(&sendbuf, 1, MPI_DOUBLE, mStdGradesCity, recv_counts, displs, MPI_DOUBLE, MPI_ROOT, interCommCity);
+ 
+
 
 
     for(int l = 1; l <= nRegions; l++){
@@ -325,7 +279,7 @@ printf("\n\n\n\n");
 
 
     // Show all information
-/*     printf("\n");
+    printf("\n");
     for(int l = 0; l < nRegions; l++){
         for(int i = 0; i < nCity; i++){
             printf("Reg %d - Cid %d: menor: %02d, maior: %02d, mediana: %.2f, média: %.2f e DP: %.2f \n"
@@ -341,7 +295,7 @@ printf("\n\n\n\n");
         ,l,mMinGradesRegions[l],mMaxGradesRegions[l],mMedianGradesRegions[l],mMeanGradesRegions[l],mStdGradesRegions[l]);
         
     }
-    printf("\n"); */
+    printf("\n");
 
     printf("\nBrasil: menor: %02d, maior: %02d, mediana: %.2f, média: %.2f e DP: %.2f \n\n"
         ,mMinGradesCountry[0],mMaxGradesCountry[0],mMedianGradesCountry[0],mMeanGradesCountry[0],mStdGradesCountry[0]);

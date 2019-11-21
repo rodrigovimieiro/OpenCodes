@@ -47,14 +47,6 @@ int main(int argc,char **argv){
 	MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
     
 
-        
-    char name[MPI_MAX_PROCESSOR_NAME];
-    int len;
-    MPI_Get_processor_name(name, &len);
-    printf("Hello, world.  I am %02d of %02d on %s\n", myrank, npes, name); 
-    //printf("I am a slave with rank: %d, %d brothers, nStudent:%d, nCity:%d and nRegions:%d. \n",myrank,npes,nStudent,nCity,nRegions);
-   
-
     MPI_Comm_get_parent(&interCommParent);
 
         
@@ -79,14 +71,14 @@ int main(int argc,char **argv){
     
 
     
-    unsigned int ratio = nVecTotal / NCORES;
-    unsigned int ratioRemain = nVecTotal % NCORES;
+    unsigned int ratio = nVecTotal / npes;
+    unsigned int ratioRemain = nVecTotal % npes;
 
     //printf("Ratio:%d, remain:%d.\n",ratio,ratioRemain);
 
 
     unsigned int tmp_sum = 0; 
-    for(int l = 0; l < NCORES; l++){
+    for(int l = 0; l < npes; l++){
         send_counts[l] = ratio * nDataOnEachVec;
 
         if (ratioRemain > 0) {
@@ -150,9 +142,14 @@ int main(int argc,char **argv){
         MPI_Gatherv(maxValueInd, nVec, MPI_UNSIGNED, &recvbuf, recv_counts, displs, MPI_UNSIGNED, 0, interCommParent);
     }
 
-    MPI_Barrier(interCommParent);
 
-    MPI_Comm_disconnect(&interCommParent);
+
+/*     char name[MPI_MAX_PROCESSOR_NAME];
+    int len;
+    MPI_Get_processor_name(name, &len);
+    printf("Hello, world.  I am %02d of %02d on %s | Who am I? %02d. \n", myrank, npes, name, whoAmI); 
+    //printf("I am a slave with rank: %d, %d brothers, nStudent:%d, nCity:%d and nRegions:%d. \n",myrank,npes,nStudent,nCity,nRegions); */
+
 
     MPI_Finalize();
 
