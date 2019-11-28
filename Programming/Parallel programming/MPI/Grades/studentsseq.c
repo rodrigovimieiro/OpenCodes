@@ -76,18 +76,6 @@ int main(int argc,char **argv){
     generateRandNumbers(mGrades,nCity,nStudent,nRegions);
 
     
-    // Show preliminary information
-    for(int l = 0; l < nRegions; l++){
-        printf("\nRegion: %d ------------ \n",l);
-        for(int i = 0; i < nCity; i++){
-            for(int j = 0; j < nStudent; j++)
-                    printf("%02d ",mGrades[(l*nCity*nStudent)+i*nStudent+j]);
-            printf("\n");
-        }
-    }
-    
-
-
 
 
     clock_t wtime = clock();
@@ -102,6 +90,7 @@ int main(int argc,char **argv){
                 findMedian(&mGrades[(l*nCity*nStudent)+i*nStudent], &mMedianGradesCity[l*nCity+i], nStudent);
             }
 
+    double masterTime_city = (double)(clock() - wtime) / CLOCKS_PER_SEC;
 
     // Run over regions
     for(int l = 0; l < nRegions; l++){
@@ -112,6 +101,8 @@ int main(int argc,char **argv){
         findMedian(&mGrades[(l*nCity*nStudent)], &mMedianGradesRegions[l], nCity*nStudent);
 
     }
+
+    double masterTime_region = (double)(clock() - wtime) / CLOCKS_PER_SEC;
 
     // Over country
     findMax(&mMaxGradesRegions[0],&mMaxGradesCountry[0], &bestRegion, nRegions);
@@ -126,32 +117,69 @@ int main(int argc,char **argv){
 
 
     // Show all information
-    printf("\n");
-    for(int l = 0; l < nRegions; l++){
-        for(int i = 0; i < nCity; i++){
-            printf("Reg %d - Cid %d: menor: %02d, maior: %02d, mediana: %.2f, média: %.2f e DP: %.2f \n"
-            ,l,i,mMinGradesCity[l*nCity+i],mMaxGradesCity[l*nCity+i],mMedianGradesCity[l*nCity+i],mMeanGradesCity[l*nCity+i],mStdGradesCity[l*nCity+i]);
+
+    if(showAuxInfo){
+
+        // Show preliminary information
+        for(int l = 0; l < nRegions; l++){
+            printf("\nRegion: %d ------------ \n",l);
+            for(int i = 0; i < nCity; i++){
+                for(int j = 0; j < nStudent; j++)
+                        printf("%02d ",mGrades[(l*nCity*nStudent)+i*nStudent+j]);
+                printf("\n");
+            }
+        }
+        
+        printf("\n");
+        for(int l = 0; l < nRegions; l++){
+            for(int i = 0; i < nCity; i++){
+                printf("Reg %d - Cid %d: menor: %02d, maior: %02d, mediana: %.2f, média: %.2f e DP: %.2f \n"
+                ,l,i,mMinGradesCity[l*nCity+i],mMaxGradesCity[l*nCity+i],mMedianGradesCity[l*nCity+i],mMeanGradesCity[l*nCity+i],mStdGradesCity[l*nCity+i]);
+            }
+            printf("\n");
+        }
+
+        printf("\n");
+        for(int l = 0; l < nRegions; l++){
+            
+            printf("Reg %d: menor: %02d, maior: %02d, mediana: %.2f, média: %.2f e DP: %.2f \n"
+            ,l,mMinGradesRegions[l],mMaxGradesRegions[l],mMedianGradesRegions[l],mMeanGradesRegions[l],mStdGradesRegions[l]);
+            
         }
         printf("\n");
+
+        printf("\nBrasil: menor: %02d, maior: %02d, mediana: %.2f, média: %.2f e DP: %.2f \n\n"
+            ,mMinGradesCountry[0],mMaxGradesCountry[0],mMedianGradesCountry[0],mMeanGradesCountry[0],mStdGradesCountry[0]);
+
+        printf("\nMelhor região: Região %d\n",bestRegion);
+        printf("\nMelhor cidade: Região %d, Cidade %d\n",bestRegion,bestCity[bestRegion]); 
+    
+
+        printf("\nTempo de resposta sem considerar E/S, em segundos: %fs\n\n", masterTime);
+
+        //printf("\nCountry:%fs, Region:%fs, City:%fs \n\n"
+        //,masterTime - masterTime_region, masterTime_region - masterTime_city, masterTime_city);
+
     }
 
-    printf("\n");
-    for(int l = 0; l < nRegions; l++){
-        
-        printf("Reg %d: menor: %02d, maior: %02d, mediana: %.2f, média: %.2f e DP: %.2f \n"
-        ,l,mMinGradesRegions[l],mMaxGradesRegions[l],mMedianGradesRegions[l],mMeanGradesRegions[l],mStdGradesRegions[l]);
-        
-    }
-    printf("\n");
+    write2file(masterTime,0,1);
 
-    printf("\nBrasil: menor: %02d, maior: %02d, mediana: %.2f, média: %.2f e DP: %.2f \n\n"
-        ,mMinGradesCountry[0],mMaxGradesCountry[0],mMedianGradesCountry[0],mMeanGradesCountry[0],mStdGradesCountry[0]);
-
-    printf("\nMelhor região: Região %d\n",bestRegion);
-    printf("\nMelhor cidade: Região %d, Cidade %d\n",bestRegion,bestCity[bestRegion]);
-
-
-    printf("\nTempo de resposta sem considerar E/S, em segundos: %fs\n\n", masterTime);
+    free(mGrades);
+    free(mMaxGradesCity);
+    free(mMinGradesCity);
+    free(mMedianGradesCity);
+    free(mMeanGradesCity);
+    free(mStdGradesCity);
+    free(mMaxGradesRegions);
+    free(mMinGradesRegions);
+    free(mMedianGradesRegions);
+    free(mMeanGradesRegions);
+    free(mStdGradesRegions);
+    free(mMaxGradesCountry);
+    free(mMinGradesCountry);
+    free(mMedianGradesCountry);
+    free(mMeanGradesCountry);
+    free(mStdGradesCountry);
         
 
     return 0;

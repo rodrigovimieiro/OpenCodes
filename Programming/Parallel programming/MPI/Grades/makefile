@@ -5,7 +5,7 @@ edit:
 
 run:
 	./studentsseq.bin 3 4 6 154
-	mpirun --hostfile halley.txt -np 1 studentspar_master.bin 3 4 6 154
+	mpirun --use-hwthread-cpus -hostfile halley.txt -np 1 studentspar_master.bin 300 600 10 100
 
 clean:
 	rm *.bin

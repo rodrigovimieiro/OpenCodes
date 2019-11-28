@@ -15,6 +15,11 @@ rodrigo.vimieiro@gmail.com
 #include <stdbool.h>
 #include <limits.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <string.h>
+
+#define showAuxInfo 1
 
 void findMax(unsigned int* mGrade, unsigned int* mMax, unsigned int* mInd, unsigned int sizeVec);
 void findMin(unsigned int* mGrade, unsigned int* mMin, unsigned int sizeVec);
@@ -28,3 +33,4 @@ int partition (unsigned int *arr, int low, int high);
 void quicksort(unsigned int *arr, int low, int high);
 
 #include "generateRandNumbers.c"
+#include "write2file.c"

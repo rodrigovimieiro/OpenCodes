@@ -78,18 +78,6 @@ int main(int argc,char **argv){
     // Generate random numebers 0-100 to place on matrix A
     generateRandNumbers(mGrades,nCity,nStudent,nRegions);
 
-    
-    // Show preliminary information
-    for(int l = 0; l < nRegions; l++){
-        printf("\nRegion: %d ------------ \n",l);
-        for(int i = 0; i < nCity; i++){
-            for(int j = 0; j < nStudent; j++)
-                    printf("%02d ",mGrades[(l*nCity*nStudent)+i*nStudent+j]);
-            printf("\n");
-        }
-    }
-    
-
 
 
 
@@ -103,6 +91,9 @@ int main(int argc,char **argv){
 
     int displs[NCORES];
     int send_counts[NCORES],recv_counts[NCORES];
+
+    // Get the number of available cores - 1 (master)
+    unsigned int nAvlbleCores = NCORES - 1;
 
     double sendbuf,recvbuf;
 
@@ -119,15 +110,17 @@ int main(int argc,char **argv){
     MPI_Info_set( info, "file", "halley.txt");
 
 
-/*     char name[MPI_MAX_PROCESSOR_NAME];
+    /*     
+    char name[MPI_MAX_PROCESSOR_NAME];
     int len;
     MPI_Get_processor_name(name, &len);
-    printf("Hello, world.  I am %02d of %02d on %s | Who am I? Master. \n", myrank, npes, name); */
+    printf("Hello, world.  I am %02d of %02d on %s | Who am I? Master. \n", myrank, npes, name); 
+    */
 
 
-
-    // Get the number of available cores - 1 (master)
-    unsigned int nAvlbleCores = NCORES - 1;
+    /*
+    ---------------- Country calculation ---------------- 
+    */
 
     // Create slaves for country calculations
     MPI_Comm_spawn("studentspar_slave.bin", argv+1, 1, info, 0, MPI_COMM_WORLD, &interCommCountry, errcodes); //MPI_INFO_NULL
@@ -145,7 +138,7 @@ int main(int argc,char **argv){
     // Send data (all grades) for unique slave
     MPI_Scatterv(mGrades, send_counts, displs, MPI_UNSIGNED, &recvbuf, (nStudent*nCity), MPI_UNSIGNED, MPI_ROOT, interCommCountry);
 
-
+    // Get data from slave
     MPI_Gatherv(&sendbuf, 1, MPI_UNSIGNED, mMaxGradesCountry, recv_counts, displs, MPI_UNSIGNED, MPI_ROOT, interCommCountry);
     MPI_Gatherv(&sendbuf, 1, MPI_UNSIGNED, mMinGradesCountry, recv_counts, displs, MPI_UNSIGNED, MPI_ROOT, interCommCountry);
     MPI_Gatherv(&sendbuf, 1, MPI_DOUBLE, mMeanGradesCountry, recv_counts, displs, MPI_DOUBLE, MPI_ROOT, interCommCountry);
@@ -157,11 +150,13 @@ int main(int argc,char **argv){
     MPI_Gatherv(&sendbuf, 1, MPI_UNSIGNED, &bestGrade_Ind, recv_counts, displs, MPI_UNSIGNED, MPI_ROOT, interCommCountry);
 
 
-
- 
-
+    double masterTime_coutry = (double)(clock() - wtime) / CLOCKS_PER_SEC;
 
 
+
+    /*
+    ---------------- Region calculation ---------------- 
+    */
 
     // Create slaves for regions calculations
     MPI_Comm_spawn("studentspar_slave.bin", argv+1, 1, info, 0, MPI_COMM_WORLD, &interCommRegion, errcodes);
@@ -180,6 +175,7 @@ int main(int argc,char **argv){
     // Distribute data (each region) for slaves
     MPI_Scatterv(mGrades, send_counts, displs, MPI_UNSIGNED, &recvbuf, (nStudent*nCity), MPI_UNSIGNED, MPI_ROOT, interCommRegion);
 
+    // Get data from slave
     MPI_Gatherv(&sendbuf, 1, MPI_UNSIGNED, mMaxGradesRegions, recv_counts, displs, MPI_UNSIGNED, MPI_ROOT, interCommRegion);
     MPI_Gatherv(&sendbuf, 1, MPI_UNSIGNED, mMinGradesRegions, recv_counts, displs, MPI_UNSIGNED, MPI_ROOT, interCommRegion);
     MPI_Gatherv(&sendbuf, 1, MPI_DOUBLE, mMeanGradesRegions, recv_counts, displs, MPI_DOUBLE, MPI_ROOT, interCommRegion);
@@ -187,18 +183,21 @@ int main(int argc,char **argv){
     MPI_Gatherv(&sendbuf, 1, MPI_DOUBLE, mStdGradesRegions, recv_counts, displs, MPI_DOUBLE, MPI_ROOT, interCommRegion);
 
 
-
-    
-
+    double masterTime_region = (double)(clock() - wtime) / CLOCKS_PER_SEC;
 
 
 
+    /*
+    ---------------- City calculation ---------------- 
+    */
 
+    // Calculation to lauch max number of cities / core
     unsigned int ratioCity = nCityTotal / nAvlbleCores;
     unsigned int ratioCityRemain = nCityTotal % nAvlbleCores;
 
     unsigned int tmp_sum = 0;
     unsigned int ratioCityRemain_tmp = ratioCityRemain; 
+
 
     for(int l = 0; l < nAvlbleCores; l++){
 
@@ -217,9 +216,9 @@ int main(int argc,char **argv){
     unsigned char cores2lauch;
 
     if(ratioCity == 0)
-        cores2lauch = ratioCityRemain;
+        cores2lauch = ratioCityRemain;  // We have less cities than cores available, so lauch number of cities
     else
-        cores2lauch = nAvlbleCores;
+        cores2lauch = nAvlbleCores;     // We have more cities than cores available, so lauch all cores
         
 
     // Create slaves for cities calculations
@@ -248,6 +247,7 @@ int main(int argc,char **argv){
         //printf("SendC[%d]: %d Displ: %d\n",l,recv_counts[l],displs[l]);
     }
     
+    // Get data from all slaves
     MPI_Gatherv(&sendbuf, 1, MPI_UNSIGNED, mMaxGradesCity, recv_counts, displs, MPI_UNSIGNED, MPI_ROOT, interCommCity);
     MPI_Gatherv(&sendbuf, 1, MPI_UNSIGNED, mMinGradesCity, recv_counts, displs, MPI_UNSIGNED, MPI_ROOT, interCommCity);
     MPI_Gatherv(&sendbuf, 1, MPI_DOUBLE, mMeanGradesCity, recv_counts, displs, MPI_DOUBLE, MPI_ROOT, interCommCity);
@@ -256,7 +256,7 @@ int main(int argc,char **argv){
  
 
 
-
+    // Find best region
     for(int l = 1; l <= nRegions; l++){
         unsigned int upperBound = l*nCity*nStudent;
         if(bestGrade_Ind < upperBound){
@@ -264,7 +264,7 @@ int main(int argc,char **argv){
             l = nRegions; // break
         }
     }
-
+    // Find best city
     for(int i = 1; i <= nCity; i++){
         unsigned int upperBound = (bestRegion*nCity*nStudent)+i*nStudent;
         if(bestGrade_Ind < upperBound){
@@ -279,35 +279,70 @@ int main(int argc,char **argv){
 
 
     // Show all information
-    printf("\n");
-    for(int l = 0; l < nRegions; l++){
-        for(int i = 0; i < nCity; i++){
-            printf("Reg %d - Cid %d: menor: %02d, maior: %02d, mediana: %.2f, média: %.2f e DP: %.2f \n"
-            ,l,i,mMinGradesCity[l*nCity+i],mMaxGradesCity[l*nCity+i],mMedianGradesCity[l*nCity+i],mMeanGradesCity[l*nCity+i],mStdGradesCity[l*nCity+i]);
+    if(showAuxInfo){
+    
+        // Show preliminary information
+        for(int l = 0; l < nRegions; l++){
+            printf("\nRegion: %d ------------ \n",l);
+            for(int i = 0; i < nCity; i++){
+                for(int j = 0; j < nStudent; j++)
+                        printf("%02d ",mGrades[(l*nCity*nStudent)+i*nStudent+j]);
+                printf("\n");
+            }
+        }
+        
+        printf("\n");
+        for(int l = 0; l < nRegions; l++){
+            for(int i = 0; i < nCity; i++){
+                printf("Reg %d - Cid %d: menor: %02d, maior: %02d, mediana: %.2f, média: %.2f e DP: %.2f \n"
+                ,l,i,mMinGradesCity[l*nCity+i],mMaxGradesCity[l*nCity+i],mMedianGradesCity[l*nCity+i],mMeanGradesCity[l*nCity+i],mStdGradesCity[l*nCity+i]);
+            }
+            printf("\n");
+        }
+
+        printf("\n");
+        for(int l = 0; l < nRegions; l++){
+            
+            printf("Reg %d: menor: %02d, maior: %02d, mediana: %.2f, média: %.2f e DP: %.2f \n"
+            ,l,mMinGradesRegions[l],mMaxGradesRegions[l],mMedianGradesRegions[l],mMeanGradesRegions[l],mStdGradesRegions[l]);
+            
         }
         printf("\n");
+
+        printf("\nBrasil: menor: %02d, maior: %02d, mediana: %.2f, média: %.2f e DP: %.2f \n\n"
+            ,mMinGradesCountry[0],mMaxGradesCountry[0],mMedianGradesCountry[0],mMeanGradesCountry[0],mStdGradesCountry[0]);
+
+        printf("\nMelhor região: Região %d\n",bestRegion);
+        printf("\nMelhor cidade: Região %d, Cidade %d\n",bestRegion,bestCity); 
+
+
+        printf("\nTempo de resposta sem considerar E/S, em segundos: %fs\n\n", masterTime);
+
+        //printf("\nCountry:%fs, Region:%fs, City:%fs \n\n"
+        //,masterTime_coutry, masterTime_region - masterTime_coutry, masterTime - masterTime_region);
+
     }
 
-    printf("\n");
-    for(int l = 0; l < nRegions; l++){
-        
-        printf("Reg %d: menor: %02d, maior: %02d, mediana: %.2f, média: %.2f e DP: %.2f \n"
-        ,l,mMinGradesRegions[l],mMaxGradesRegions[l],mMedianGradesRegions[l],mMeanGradesRegions[l],mStdGradesRegions[l]);
-        
-    }
-    printf("\n");
-
-    printf("\nBrasil: menor: %02d, maior: %02d, mediana: %.2f, média: %.2f e DP: %.2f \n\n"
-        ,mMinGradesCountry[0],mMaxGradesCountry[0],mMedianGradesCountry[0],mMeanGradesCountry[0],mStdGradesCountry[0]);
-
-    printf("\nMelhor região: Região %d\n",bestRegion);
-    printf("\nMelhor cidade: Região %d, Cidade %d\n",bestRegion,bestCity);
-
-
-    printf("\nTempo de resposta sem considerar E/S, em segundos: %fs\n\n", masterTime);
-
+    write2file(masterTime,0,NCORES);
         
     MPI_Finalize();
+
+    free(mGrades);
+    free(mMaxGradesCity);
+    free(mMinGradesCity);
+    free(mMedianGradesCity);
+    free(mMeanGradesCity);
+    free(mStdGradesCity);
+    free(mMaxGradesRegions);
+    free(mMinGradesRegions);
+    free(mMedianGradesRegions);
+    free(mMeanGradesRegions);
+    free(mStdGradesRegions);
+    free(mMaxGradesCountry);
+    free(mMinGradesCountry);
+    free(mMedianGradesCountry);
+    free(mMeanGradesCountry);
+    free(mStdGradesCountry);
 
     return 0;
 }

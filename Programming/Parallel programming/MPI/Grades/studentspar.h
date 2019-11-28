@@ -16,9 +16,13 @@ rodrigo.vimieiro@gmail.com
 #include <limits.h>
 #include <errno.h>
 #include <unistd.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <mpi.h>
 
-#define NCORES 48	// Number of cores
+#define NCORES 96	// Number of cores
+#define showAuxInfo 1
 
 void findMax(unsigned int* mGrade, unsigned int* mMax, unsigned int* mInd, unsigned int sizeVec, unsigned int nVec);
 void findMin(unsigned int* mGrade, unsigned int* mMin, unsigned int sizeVec, unsigned int nVec);
@@ -31,3 +35,4 @@ int partition (unsigned int *arr, int low, int high);
 void quicksort(unsigned int *arr, int low, int high);
 
 #include "generateRandNumbers.c"
+#include "write2file.c"
