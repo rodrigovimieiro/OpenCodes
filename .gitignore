@@ -13,6 +13,7 @@
 so.*
 *.pdf
 *.bin
+*.csv
 
 # Images
 
