@@ -1,4 +1,4 @@
-# Pyimagesearch Deep Learn course
+# Pyimagesearch Deep learning course
 
 This is the **FREE** *Opencv, Computer Vision and Deep-learning* course from [Pyimagesearch](https://www.pyimagesearch.com/free-opencv-computer-vision-deep-learning-crash-course/). Many of the material, including the images, pre-trained networks are available only when you subscribe to the course.
 
