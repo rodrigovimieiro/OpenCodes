@@ -36,3 +36,25 @@ plt.xlabel('Nível de cinza')
 plt.ylabel('Probabilidade')
 plt.title('Histograma')
 plt.savefig("Histograma_2.png")
+
+#%%
+
+
+# Otsu's thresholding
+thresh,img_bin = cv.threshold(img,0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
+
+hist = plt.hist(img.flatten(), bins=np.arange(0,257), range=(0, 255), density=True)
+myAxis = plt.axis()
+plt.text(76 + 1, hist[0][76], r"$p_{76}=$"+"{:.3f}".format(hist[0][76]))
+plt.text(178 + 1, hist[0][178], r"$p_{178}=$"+"{:.3f}".format(hist[0][178]))
+plt.plot(np.array((thresh,thresh)),np.array((myAxis[0],myAxis[-1])),'k--')
+plt.text(77, .05, "T-Otsu", fontsize=15)
+plt.text(24, .5, "C1", fontsize=15)
+plt.text(200, .5, "C2", fontsize=15)
+plt.axis(myAxis)
+plt.xlabel('Nível de cinza')
+plt.ylabel('Probabilidade')
+plt.title('Histograma')
+plt.savefig("Histograma_3.png")
+
+plt.imsave("img_bin.png", img_bin, cmap='gray')
