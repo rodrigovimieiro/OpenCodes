@@ -1,0 +1,11 @@
+h5py
+numpy
+matplotlib
+pandas
+pydicom
+scikit-image
+scipy
+spyder
+opencv-python
+tqdm
+tensorboard
