@@ -112,11 +112,13 @@ class MainFrame(Frame):
         # print(vmin, vmax)
 
         img_processed = np.clip(image, vmin, vmax)
+        img_processed = (img_processed - img_processed.min()) / (img_processed.max() - img_processed.min()) + 1
+        img_processed = np.log(img_processed)
         img_processed = (img_processed - img_processed.min()) / (img_processed.max() - img_processed.min())
         img_processed *= 255
         img_processed = np.uint8(img_processed)
 
-        print(self.flag_invert)
+        # print(self.flag_invert)
         if self.flag_invert:
             img_processed = img_processed.max() - img_processed
 
