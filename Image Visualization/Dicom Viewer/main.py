@@ -6,9 +6,11 @@ Created on Thu Jun 8 10:00:19 2021
 
 from tkinter import Menu, Tk
 
+from tkinterdnd2 import DND_FILES, TkinterDnD
+
 from libs.frames.main_frame import MainFrame
 
-root = Tk()
+root = TkinterDnD.Tk() #Tk()
 
 # Define and configure menu
 my_menu = Menu(root)

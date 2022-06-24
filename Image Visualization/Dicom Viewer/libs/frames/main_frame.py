@@ -1,6 +1,8 @@
 
-from tkinter import Frame, Label, Button, Entry, filedialog
+from tkinter import Frame, Label, Button, Entry, filedialog, END
 from PIL import ImageTk, Image
+
+from tkinterdnd2 import DND_FILES
 
 import pydicom
 import numpy as np
@@ -68,6 +70,9 @@ class MainFrame(Frame):
         self.img_panel = Label(self.btm_frame, image=img2plot)
         self.img_panel.grid(row=0, column=0, columnspan=2)
 
+        self.img_panel.drop_target_register(DND_FILES)
+        self.img_panel.dnd_bind('<<Drop>>', lambda e: self.open_img(e.data))
+
         return
 
     ########## Button func ##########
@@ -130,12 +135,16 @@ class MainFrame(Frame):
 
         return img_scaled
 
-    def open_img(self):
+    def open_img(self, incoming_path=[]):
 
-        img_path = self.load_path()
-        self.img = pydicom.read_file(img_path).pixel_array
+        if not incoming_path:
+            incoming_path = self.load_path()
+        self.img = pydicom.read_file(incoming_path).pixel_array
 
         self.update_img_frame(self.img)
+
+        self.window_entry.delete(0, END)
+        self.level_entry.delete(0, END)
 
         self.window_entry.insert(0, str(self.window_value))
         self.level_entry.insert(0, str(self.level_value))
