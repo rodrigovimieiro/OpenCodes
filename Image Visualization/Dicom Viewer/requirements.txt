@@ -1,0 +1,8 @@
+numpy
+matplotlib
+pydicom
+pylibjpeg
+pylibjpeg-libjpeg
+opencv-python
+tkinterdnd2
+Pillow
