@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Remote Debug",
+            "type": "python",
+            "request": "attach",
+            "host": "192.168.0.1 - your server here",
+            "port": 5678,
+            "python": "~/.virtualenvs/science/bin/python",
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/home/your-remote-server-path-here"
+                }
+            ]
+        }
+    ]
+}
