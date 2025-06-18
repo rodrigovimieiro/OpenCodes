@@ -1,0 +1,15 @@
+{
+  "models": [
+    {
+      "title": "gemma3:27b",
+      "provider": "ollama",
+      "model": "gemma3:27b-it-qat",
+      "purpose": "chat"
+    }
+  ],
+  "tabAutocompleteModel": {
+    "title": "Qwen2.5-Coder 1.5B Base",
+    "provider": "ollama",
+    "model": "qwen2.5-coder:1.5b-base"
+  }
+}
